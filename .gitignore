@@ -1,0 +1,9 @@
+.idea
+
+# virtualenv
+bin
+include
+lib
+
+# db files
+db.*
