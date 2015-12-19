@@ -20,8 +20,8 @@ class XML:
     xml_root = None
 
     def __init__(self, file):
-        tree = et.parse(file)
-        self.xml_root = tree.getroot()
+        self.tree = et.parse(file)
+        self.xml_root = self.tree.getroot()
         assert self.xml_root.tag == 'sheets'
 
     def eval(self):
