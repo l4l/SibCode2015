@@ -6,7 +6,7 @@ SECRET_KEY = 'ey7kgj#c6r!lxq&0+upao)r!i6%=-&iibd%3o5l70^xs%xv1#@'
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost']
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -53,9 +53,6 @@ DATABASES = {
     }
 }
 
-# Internationalization
-# https://docs.djangoproject.com/en/1.8/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -66,8 +63,8 @@ USE_L10N = True
 
 USE_TZ = True
 
-STATIC_ROOT = '/srv/www/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 STATIC_URL = '/static/'
 
-MEDIA_ROOT = '/srv/www/media'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 MEDIA_URL = '/download/'

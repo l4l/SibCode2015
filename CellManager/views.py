@@ -1,12 +1,12 @@
-import random
 import string
 
-from CellManager.parser import XML
-from django.http import HttpResponse
-from django.http import HttpResponseRedirect
-from django.shortcuts import render_to_response
-from django import forms
 import os
+import random
+from CellManager.parser import XML
+from django import forms
+from django.http import HttpResponse
+from django.shortcuts import render_to_response
+from shutil import move
 
 
 class UploadFileForm(forms.Form):
@@ -14,34 +14,31 @@ class UploadFileForm(forms.Form):
     file = forms.FileField()
 
 
-def miss(request):
-    return HttpResponse('404')
-
-
 def load(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
-        if form.is_valid():
-            for key in request.FILES.keys():
-                return HttpResponseRedirect(handle_uploaded_file(request.FILES[key]))
+        for key in request.FILES.keys():
+            return HttpResponse(handle_uploaded_file(request.FILES[key]))
 
     else:
         form = UploadFileForm()
-    return render_to_response('', {'form': form})
+    return render_to_response('registration', {'form': form})
 
 
 def handle_uploaded_file(file):
     file_name = random_string(10)
-    while not os.path.isfile(file):
+    while os.path.isfile(file_name + '.xml'):
         file_name = random_string(10)
 
-    destination = open(file_name, 'wb+')
+    destination = open(file_name + '.xml', 'wb+')
 
     for chunk in file.chunks():
         destination.write(chunk)
 
     destination.close()
-    update_file(file)
+    update_file(file_name + '.xml')
+    move(file_name + '.xml', 'media/' + file_name)
+    return file_name
 
 
 def update_file(file):
