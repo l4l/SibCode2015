@@ -1,6 +1,7 @@
 import random
 import string
 
+from CellManager.parser import XML
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
@@ -40,6 +41,13 @@ def handle_uploaded_file(file):
         destination.write(chunk)
 
     destination.close()
+    update_file(file)
+
+
+def update_file(file):
+    xml = XML(file)
+    xml.eval()
+    xml.save(file)
 
 
 def random_string(n):

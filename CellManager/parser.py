@@ -1,10 +1,10 @@
-from xml.etree import cElementTree as tree
+from xml.etree import cElementTree as et
 
 from CellManager.checker import evaluate
 
 
 def set_displayed(cell, val):
-    disp = tree.Element('displayedValue')
+    disp = et.Element('displayedValue')
     disp.text = str(val)
     cell.append(disp)
 
@@ -16,21 +16,23 @@ def eval_if_need(value, fun):
 
 
 class XML:
-    xml_data = None
+    tree = None
+    xml_root = None
 
-    def __init__(self, data):
-        self.xml_data = tree.fromstring(data)
-        assert self.xml_data.tag == 'sheets'
+    def __init__(self, file):
+        tree = et.parse(file)
+        self.xml_root = tree.getroot()
+        assert self.xml_root.tag == 'sheets'
 
     def eval(self):
-        for sheet in self.xml_data:
+        for sheet in self.xml_root:
             for cell in sheet:
                 set_displayed(cell,
                               eval_if_need(cell.find('value').text,
                                            self.get_value))
 
     def get_value(self, let, num):
-        cell = self.xml_data.find('.//cell[@col=\'%s\'][@row=\'%s\']' % (let, num))
+        cell = self.xml_root.find('.//cell[@col=\'%s\'][@row=\'%s\']' % (let, num))
         val = cell.find('displayedValue')
 
         if not val:
@@ -46,6 +48,4 @@ class XML:
         return val
 
     def save(self, file):
-        t = tree.ElementTree()
-        t._setroot(self.xml_data)
-        t.write(file, encoding="UTF-8")
+        self.tree.write(file, encoding="UTF-8")
