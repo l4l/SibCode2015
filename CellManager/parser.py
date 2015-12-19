@@ -4,7 +4,11 @@ from CellManager.checker import evaluate
 
 
 def set_displayed(cell, val):
-    disp = et.Element('displayedValue')
+    disp = cell.find('displayedValue')
+    if disp is not None:
+        cell.remove(disp)
+    else:
+        disp = et.Element('displayedValue')
     disp.text = str(val)
     cell.append(disp)
 
