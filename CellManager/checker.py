@@ -19,6 +19,21 @@ def cosg(ang):
     return cos(degToRad(ang))
 
 
+def for_range(fun, s):
+    f, _, t = s.partition(':')
+    p = re.search('[0-9]+', f).start()
+    fr = (f[:p], f[p:])
+    p = re.search('[0-9]+', t).start()
+    to = (t[:p], t[p:])
+    m = fun(fr[0], fr[1])
+    for f in fr[0]:
+        for t in to[0]:
+            for i in range(ord(f), ord(t) + 1):
+                for j in range(int(f[1]), int(t[1]) + 1):
+                    fun(i, j, m)
+    return m
+
+
 def avg(*argv):
     return sum(argv) / len(argv)
 
@@ -83,12 +98,20 @@ def insert_actual_values(s, f):
             sub += m
             continue
         p = re.search('[0-9]+', m).start()
-        sub += str(f(m[:p], m[p:]))
+        val = f(m[:p], m[p:])
+        if val is '' and \
+                (sub[-1:] in ['-', '+', '*', '/', '^'] or
+                 s[-1:] in ['-', '+', '*', '/', '^'] or
+                 sub[-4:-1] in ['sin', 'cos', 'abs'] or
+                 sub[-5:-1] in ['sqrt']):
+            sub += '0'
+        else:
+            sub += str(val)
     return sub
 
 
-def evaluate(str, f):
-    val = eval(insert_actual_values(lower_case(str), f))
+def evaluate(s, f):
+    val = eval(insert_actual_values(lower_case(s), f))
     val -= 1e-9  # I am really sorry about that
     val = round(val, 8)
     if floor(val) == ceil(val):

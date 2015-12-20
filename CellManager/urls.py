@@ -4,7 +4,9 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
+    url(r'^$', views.new),
     url(r'^upload/$', views.load),
+    # url(r'^(?P<id>[A-Z0-9]{10})$', views.show),
 ]
 
 from django.conf import settings

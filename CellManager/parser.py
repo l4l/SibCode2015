@@ -31,9 +31,12 @@ class XML:
     def eval(self):
         for sheet in self.xml_root:
             for cell in sheet:
-                set_displayed(cell,
-                              eval_if_need(cell.find('value').text,
-                                           self.get_value))
+                try:
+                    set_displayed(cell,
+                                  eval_if_need(cell.find('value').text,
+                                               self.get_value))
+                except:
+                    set_displayed(cell, '')
 
     def get_value(self, let, num):
         cell = self.xml_root.find('.//cell[@col=\'%s\'][@row=\'%s\']' % (let, num))
