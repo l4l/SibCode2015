@@ -76,16 +76,15 @@ def lower_case(s):
 
 
 def insert_actual_values(s, f):
-    reg = re.search('[A-Z][0-9]', s)
-    p = 0
+    matched = re.split(r'([A-Z]+[0-9]+)', s)
     sub = ""
-    while reg is not None:
-        p = reg.start()
-        sub += s[0:p]
-        sub += str(f(s[p], s[p + 1]))
-        s = s[p + 2:]
-        reg = re.search('[A-Z][0-9]', s)
-    return sub + s
+    for i, m in enumerate(matched):
+        if i % 2 == 0:
+            sub += m
+            continue
+        p = re.search('[0-9]+', m).start()
+        sub += str(f(m[:p], m[p:]))
+    return sub
 
 
 def evaluate(str, f):
