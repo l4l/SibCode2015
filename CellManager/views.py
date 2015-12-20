@@ -2,6 +2,9 @@ import string
 
 import os
 import random
+
+from django.template import RequestContext, loader, Template
+
 from CellManager.parser import XML
 from django import forms
 from django.http import HttpResponse
@@ -12,6 +15,15 @@ from shutil import move, copyfile
 class UploadFileForm(forms.Form):
     title = forms.CharField(max_length=50)
     file = forms.FileField()
+
+
+def show(request, id):
+    t = loader.get_template('index.html')
+    c = RequestContext(request, {'id': id + '.xml'})
+    # xml = update_file('media/' + id)
+    # xml.tree
+    return HttpResponse(t.render(c),
+        content_type="text/html")
 
 
 def load(request):
@@ -35,8 +47,7 @@ def handle_uploaded_file(file):
 
     destination.close()
     update_file(file_name + '.xml')
-    move(file_name + '.xml', 'media/' + file_name)
-    os.remove(file_name + '.xml')
+    move(file_name + '.xml', 'media/' + file_name + '.xml')
     return file_name
 
 
@@ -49,7 +60,7 @@ def update_file(file):
 def new(request):
     file_name = new_name()
     copyfile('static/template.xml', 'media/' + file_name + '.xml')
-    return redirect('download/' + file_name)
+    return redirect('/' + file_name)
 
 
 def new_name():

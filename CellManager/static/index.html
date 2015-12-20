@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en" class=" mdzr-js mdzr-borderradius mdzr-boxshadow mdzr-cssanimations mdzr-svg">
+<head>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script>var myList = [{"name": "abc", "age": 50},
+        {"age": "25", "hobby": "swimming"},
+        {"name": "xyz", "hobby": "programming"}];
+
+    function buildHtmlTable() {
+        var columns = addAllColumnHeaders(myList);
+
+        for (var i = 0; i < myList.length; i++) {
+            var row$ = $('<tr/>');
+            for (var colIndex = 0; colIndex < columns.length; colIndex++) {
+                var cellValue = myList[i][columns[colIndex]];
+
+                if (cellValue == null) {
+                    cellValue = "";
+                }
+
+                row$.append($('<td/>').html(cellValue));
+            }
+            $("#excelDataTable").append(row$);
+        }
+    }
+
+
+    function addAllColumnHeaders(myList) {
+        var columnSet = [];
+        var headerTr$ = $('<tr/>');
+
+        for (var i = 0; i < myList.length; i++) {
+            var rowHash = myList[i];
+            for (var key in rowHash) {
+                if ($.inArray(key, columnSet) == -1) {
+                    columnSet.push(key);
+                    headerTr$.append($('<th/>').html(key));
+                }
+            }
+        }
+        $("#excelDataTable").append(headerTr$);
+
+        return columnSet;
+    }</script>
+
+
+
+
+
+
+
+
+
+    <script>
+        function loadDoc(id) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (xhttp.readyState == 4 && xhttp.status == 200) {
+                    response(xhttp);
+                }
+            };
+            xhttp.open("GET", "http://127.0.0.1:8001/download/" + id.replace('.xml', '') + '/', true);
+            xhttp.send();
+        }
+
+        var colLength = [];
+        function response(xml) {
+            var xmlDoc = xml.responseXML;
+
+            var sheet = xmlDoc.getElementsByTagName("sheet");
+            var table = "";
+            for (var j = 0; j < sheet.length; j++) {
+                table += "<div class=\"sheet\" id=\"sheet" + j + "\">";
+
+                var cell = sheet[j].getElementsByTagName("cell");
+
+                for (var i = 0; i < cell.length; i++) {
+
+                var row = cell[i].getAttribute("row");
+                var col = cell[i].getAttribute("col");
+                var length = cell[i].getElementsByTagName("value")[0].childNodes[0].nodeValue.length;
+                var pos = col.charCodeAt(0) - 65;
+                colLength[pos] = length > colLength[pos] || colLength[pos] == undefined ? length : colLength[pos];
+
+                table += "<div class=\"cell row" + row + " col" + col + "\" id=\"cell" + row + col + "\" contextmenu=\"colorised\""
+                        + " style=\"top: " + (parseInt(row) * 45) + "px;\">";
+
+                    table += "<div class=\"value\" id=\"value" + row + col
+                            + "\" contenteditable=\"true\" >"
+                            + cell[i].getElementsByTagName("value")[0].childNodes[0].nodeValue
+                            + "</div>"
+                            + "<div class=\"displayedValue\" id=\"displayedValue" + row + col + "\">"
+                            + cell[i].getElementsByTagName("displayedValue")[0].childNodes[0].nodeValue
+                            + "</div>";
+                    table += "</div>";
+                }
+                table += "</div>";
+            }
+            document.getElementById("table-response").innerHTML = table;
+            var buff = 0;
+            for (j = 0; j < colLength.length; j++) {
+                if (colLength[j] != undefined) {
+                    $(".col" + String.fromCharCode(65 + j)).css({
+                        "width": (colLength[j] * 15) + "px",
+                        "left": buff + "px"
+                    });
+                    $(".col" + String.fromCharCode(65 + j) + ":hover").css({
+                        "background-color": "lightcyan"
+                    });
+                    buff += colLength[j] * 15;
+                }
+            }
+        }
+    </script>
+    <script type="text/javascript">
+        var bodyText = ["The"];
+        function generateText(sentenceCount) {
+            for (var i = 0; i < sentenceCount; i++)
+                document.write(bodyText[Math.floor(Math.random() * 7)] + " ")
+        }
+    </script>
+
+    <style>
+        table, th, td {
+            border: 1px solid aliceblue;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 5px;
+        }
+
+        .cell {
+            font-family: Verdana,sans-serif;
+            font-size: 15px;
+            line-height: 1.5;
+            height: 40px;
+            padding: 15px;
+            position: absolute;
+        }
+
+        .cell:hover {
+            background-color: lightsteelblue;
+        }
+
+        .value {
+            height: 20px;
+            float: top;
+        }
+
+        .displayedValue {
+            height: 20px;
+            float: top;
+        }
+
+        .sheet {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 16%;
+        }
+
+        body {
+            font-family: Verdana, sans-serif;
+            font-size: 15px;
+            line-height: 1.5;
+            width: 100%;
+            height: 100%;
+        }
+
+        html {
+            width: 100%;
+            height: 100%;
+        }
+
+        .wrapper {
+            width: 100%;
+            height: 100%;
+            padding: 15px;
+        }
+
+        .response {
+            width: 100%;
+            height: 100%;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: "Segoe UI", Arial, sans-serif;
+            font-weight: 400;
+            margin: 10px 0;
+        }
+    </style>
+
+</head>
+
+<body>
+{% block title %}{{ section.title }}{% endblock %}
+
+{% block content %}
+    <h1>{{ section.title }}</h1>
+
+    {% for story in story_list %}
+        <h2>
+            <a href="{{ story.get_absolute_url }}">
+                asd
+            </a>
+        </h2>
+        <p>{{ story.tease|truncatewords:"100" }}</p>
+    {% endfor %}
+{% endblock %}
+
+<div class="wrapper">
+                <h1>Cell Manager</h1>
+                <button type="button" onclick="loadDoc('{{ id }}')">update</button>
+                <div class="response" id="table-response"></div>
+
+    <nav id="nav">
+    </nav>
+</div>
+
+
+
+<menu type="context" id="colorised">
+  <menuitem label="gray"></menuitem>
+  <menuitem label="random"></menuitem>
+</menu>
+
+</body>
+</html>

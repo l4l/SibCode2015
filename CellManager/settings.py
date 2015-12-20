@@ -1,6 +1,7 @@
 import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+CURRENT_DIR = os.path.dirname(__file__)
 
 SECRET_KEY = 'ey7kgj#c6r!lxq&0+upao)r!i6%=-&iibd%3o5l70^xs%xv1#@'
 
@@ -31,7 +32,7 @@ ROOT_URLCONF = 'CellManager.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['CellManager/static'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -42,6 +43,10 @@ TEMPLATES = [
             ],
         },
     },
+]
+
+LOCALE_PATHS = [
+    CURRENT_DIR,
 ]
 
 WSGI_APPLICATION = 'CellManager.wsgi.application'
