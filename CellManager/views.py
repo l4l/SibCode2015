@@ -47,7 +47,7 @@ def handle_uploaded_file(file):
 
     destination.close()
     update_file(file_name + '.xml')
-    move(file_name + '.xml', 'media/' + file_name + '.xml')
+    move(file_name + '.xml', 'media/' + file_name)
     return file_name
 
 
@@ -59,7 +59,7 @@ def update_file(file):
 
 def new(request):
     file_name = new_name()
-    copyfile('static/template.xml', 'media/' + file_name + '.xml')
+    copyfile('static/template.xml', 'media/' + file_name)
     return redirect('/' + file_name)
 
 
